@@ -43,7 +43,7 @@ services:
       RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
       DEVICE_API_KEY: ${DEVICE_API_KEY}
       JWT_SECRET: ${JWT_SECRET}
-    command: npm run start:watch
+    command: npm run start:dev
 
 volumes:
   pgdata:

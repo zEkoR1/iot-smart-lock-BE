@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev-full": "docker-compose up --build ",
-    "start:dev": "nodemon src/index.js"
+    "start:dev": "npx prisma migrate dev --skip-generate --schema prisma/schema.prisma && nodemon --legacy-watch  src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +25,33 @@
     "prisma": "^6.7.0"
   },
   "devDependencies": {
+    "eslint-config-airbnb-base": "^15.0.0",
     "nodemon": "^3.1.10"
+  },
+  "eslintConfig": {
+    "extends": "airbnb-base",
+    "env": {
+      "es6": true,
+      "browser": true
+    },
+    "rules": {
+      "brace-style": [
+        "error",
+        "stroustrup"
+      ],
+      "comma-dangle": [
+        "error",
+        "never"
+      ],
+      "no-unused-vars": [
+        "warn"
+      ],
+      "no-var": [
+        "off"
+      ],
+      "one-var": [
+        "off"
+      ]
+    }
   }
 }

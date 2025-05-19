@@ -1,4 +1,4 @@
-const userService = require('../services/auth.service');  // no destructuring!
+const userService = require('../services/auth.service');
 
 exports.findAll = async (req, res) => {
     try {
