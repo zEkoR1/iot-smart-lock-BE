@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:15
-    container_name: iot_postgres
+    container_name: iot_postgres_dev
     restart: always
     ports:
       - "5432:5432"
@@ -10,11 +10,11 @@ services:
       POSTGRES_PASSWORD: iotpassword
       POSTGRES_DB: iotdb
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata_dev:/var/lib/postgresql/data
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: iot_rabbitmq
+    container_name: iot_rabbitmq_dev
     restart: always
     ports:
       - "5672:5672"
@@ -24,8 +24,10 @@ services:
       RABBITMQ_DEFAULT_PASS: admin
 
   backend:
-    build: .
-    container_name: iot_backend
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: iot_backend_dev
     restart: always
     ports:
       - "3000:3000"
@@ -36,8 +38,12 @@ services:
       PORT: 3000
       DATABASE_URL: postgres://iotuser:iotpassword@postgres:5432/iotdb
       RABBITMQ_URL: amqp://admin:admin@rabbitmq:5672
+      NODE_ENV: development
       DEVICE_API_KEY: ${DEVICE_API_KEY}
       JWT_SECRET: ${JWT_SECRET}
+    volumes:
+      - ./:/app
+      - /app/node_modules
 
 volumes:
-  pgdata:
+  pgdata_dev:

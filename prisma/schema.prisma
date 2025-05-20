@@ -6,7 +6,8 @@
 
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -41,8 +42,9 @@ model Device {
 model UserDevice {
   userId   String
   deviceId String
-  role     String   @default("owner")
+  role     Role
   addedAt  DateTime @default(now())
+  revokedAt DateTime? @default(dbgenerated("(now() + '24:00:00'::interval)"))
   revoked  Boolean  @default(false)
 
   user     User   @relation(fields:[userId], references:[id])
@@ -60,4 +62,9 @@ model Log {
   deviceId  String
   user      User     @relation(fields: [userId], references: [id])
   device    Device   @relation(fields: [deviceId], references: [id])
+}
+
+enum Role {
+  owner
+  guest
 }

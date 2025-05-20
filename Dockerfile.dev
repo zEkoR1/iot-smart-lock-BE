@@ -1,0 +1,17 @@
+FROM node:20
+
+WORKDIR /app
+
+# Install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy project files
+COPY . .
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Use ts-node-dev for hot reloading
+# Replace CMD with development script
+CMD ["npm", "run", "dev:docker"]
