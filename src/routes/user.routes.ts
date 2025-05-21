@@ -6,7 +6,6 @@ import { create, findAll } from '../controllers/user.controller';
 
 router.get("/users", findAll);
 router.post('/users', validateDto(CreateUserDto), create);
-// router.post("auth/new", singup);
-// router.post("/auth", login);
+
 
 module.exports = router;

@@ -12,6 +12,8 @@ COPY . .
 # Generate Prisma client
 RUN npx prisma generate
 
+# Expose port
+EXPOSE 3000
+
 # Use ts-node-dev for hot reloading
-# Replace CMD with development script
-CMD ["npm", "run", "dev:docker"]
+CMD ["npm", "run", "dev"]

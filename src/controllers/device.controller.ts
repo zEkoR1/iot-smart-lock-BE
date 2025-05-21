@@ -28,7 +28,6 @@ export async function findOne(req: Request, res: Response) {
 
 export async function create(req: Request, res: Response) {
     try {
-        console.log("IS HERE");
         const device = await deviceService.create(req.body);
         res.status(201).json(device);
     }

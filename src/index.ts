@@ -9,7 +9,7 @@ import 'reflect-metadata';
 import { Request, Response } from 'express';
 const userRoutes = require('./routes/user.routes');
 const deviceRoutes = require('./routes/device.routes');
-// import authRoutes from './routes/auth.routes';
+const accessRoutes = require('./routes/access.routes'); // Add this line
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -21,11 +21,6 @@ app.use(rateLimit({ windowMs: 60 * 1000, max: 60 }));
 app.use(express.json());
 app.use(morgan('dev'));
 
-// app.use((req, res, next) => {
-//     const key = req.headers['x-api-key'];
-//     if (key !== process.env.DEVICE_API_KEY) console.log("FORBIDDEN ITS WORKING ");
-//     next();
-// });
 
 app.post('/data', async (req: Request, res: Response) => {
     const { deviceId, payload } = req.body;
@@ -33,8 +28,9 @@ app.post('/data', async (req: Request, res: Response) => {
     res.sendStatus(200);
 });
 // app.use('/api', authRoutes)
-app.use('/api', userRoutes)
-app.use('/api', deviceRoutes)
+app.use('/api', userRoutes);
+app.use('/api', deviceRoutes);
+app.use('/api/', accessRoutes);  
 app.listen(parseInt(process.env.PORT || '3000', 10), '0.0.0.0', () => {
     console.log(`Server running on port ${process.env.PORT || 3000}`);
 });

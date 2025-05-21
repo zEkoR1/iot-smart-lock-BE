@@ -1,4 +1,3 @@
-// src/middleware/validateDto.js
 import { Request, Response, NextFunction } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
@@ -6,6 +5,12 @@ import { validate, ValidationError } from 'class-validator';
 export function validateDto(DtoClass: any) {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
+
+            if (!req.body){
+                return res.status(400).json({
+                    message: 'Validation failed. The body should not be empty',
+                });
+            }
             // Transform the plain request body object to a class instance
             const dtoObject = plainToInstance(DtoClass, req.body, {
                 enableImplicitConversion: true,
