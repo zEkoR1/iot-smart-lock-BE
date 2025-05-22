@@ -39,5 +39,6 @@ services:
       DEVICE_API_KEY: ${DEVICE_API_KEY}
       JWT_SECRET: ${JWT_SECRET}
 
+
 volumes:
   pgdata:
