@@ -21,6 +21,9 @@ FROM node:20-slim
 
 WORKDIR /app
 
+# Install OpenSSL, which is good practice for Prisma
+RUN apt-get update -y && apt-get install -y openssl
+
 # Copy package files and install only production dependencies
 COPY package*.json ./
 RUN npm install --omit=dev
