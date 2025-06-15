@@ -2,16 +2,16 @@
   "name": "iot-smart-lock",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "build": "tsc --outDir dist",
+    "build": "tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "dev:docker": "ts-node-dev --poll --respawn --transpile-only src/index.ts",
-    "prisma:generate": "prisma generate",
+    "prisma:generate": "npx prisma generate",
     "docker:dev:up": "docker-compose -f docker-compose.dev.yml up",
     "docker:dev:down": "docker-compose -f docker-compose.dev.yml down",
-    "docker:dev:build": "docker-compose -f docker-compose.dev.yml build"
+    "docker:dev:build": "docker-compose -f docker-compose.dev.yml build --no-cache"
   },
   "keywords": [],
   "author": "",
