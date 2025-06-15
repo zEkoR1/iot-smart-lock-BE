@@ -4,11 +4,8 @@ export class CreateUserDto {
     @IsString()
     name!: string;
 
-    // @IsString()
-    fingerprint!: any;
-
-    // @IsString()
-    face!: any;
+    @IsString()
+    face!: string;
 
     @IsUUID()
     deviceId!: string;

@@ -8,7 +8,10 @@
     "build": "tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "dev:docker": "ts-node-dev --poll --respawn --transpile-only src/index.ts",
-    "prisma:generate": "npx prisma generate",
+    "prisma:generate": "node ./node_modules/prisma/build/index.js generate",
+    "db:wait": "node wait-for-db.js",
+    "db:migrate": "node ./node_modules/prisma/build/index.js migrate deploy",
+    "start:dev:docker": "npm run db:wait && npm run db:migrate && npm run dev:docker",
     "docker:dev:up": "docker-compose -f docker-compose.dev.yml up",
     "docker:dev:down": "docker-compose -f docker-compose.dev.yml down",
     "docker:dev:build": "docker-compose -f docker-compose.dev.yml build --no-cache"

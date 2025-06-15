@@ -7,6 +7,7 @@ import { PrismaClient } from '@prisma/client';
 import morgan from 'morgan';
 import 'reflect-metadata';
 import { Request, Response } from 'express';
+import { errorHandler } from './middlewares/error-handler.middleware';
 const userRoutes = require('./routes/user.routes');
 const deviceRoutes = require('./routes/device.routes');
 const accessRoutes = require('./routes/access.routes'); // Add this line
@@ -31,6 +32,7 @@ app.post('/data', async (req: Request, res: Response) => {
 app.use('/api', userRoutes);
 app.use('/api', deviceRoutes);
 app.use('/api/', accessRoutes);  
+app.use(errorHandler);
 app.listen(parseInt(process.env.PORT || '3000', 10), '0.0.0.0', () => {
     console.log(`Server running on port ${process.env.PORT || 3000}`);
 });

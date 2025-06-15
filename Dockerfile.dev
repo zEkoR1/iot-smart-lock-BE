@@ -10,10 +10,7 @@ RUN npm install
 COPY . .
 
 # Generate Prisma client
-RUN npm run prisma:generate
+RUN node ./node_modules/prisma/build/index.js generate
 
 # Expose port
 EXPOSE 3000
-
-# Use ts-node-dev for hot reloading
-CMD ["npm", "run", "dev"]

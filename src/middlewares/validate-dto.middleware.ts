@@ -1,48 +1,33 @@
 import { Request, Response, NextFunction } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
+import { BadRequestError } from '../utils/errors/bad-request-error';
 
 export function validateDto(DtoClass: any) {
     return async (req: Request, res: Response, next: NextFunction) => {
-        try {
+        // Transform the plain request body object to a class instance
+        const dtoObject = plainToInstance(DtoClass, req.body, {
+            enableImplicitConversion: true,
+            excludeExtraneousValues: false
+        });
 
-            if (!req.body){
-                return res.status(400).json({
-                    message: 'Validation failed. The body should not be empty',
-                });
-            }
-            // Transform the plain request body object to a class instance
-            const dtoObject = plainToInstance(DtoClass, req.body, {
-                enableImplicitConversion: true,
-                excludeExtraneousValues: false
-            });
+        // Validate the DTO object
+        const errors = await validate(dtoObject, { 
+            whitelist: true,
+            forbidNonWhitelisted: true,
+            skipMissingProperties: false
+        });
 
-            // Validate the DTO object
-            const errors = await validate(dtoObject, { 
-                whitelist: true,
-                forbidNonWhitelisted: true,
-                skipMissingProperties: false
-            });
-
-            if (errors.length > 0) {
-                const formattedErrors = formatValidationErrors(errors);
-                res.status(400).json({
-                    message: 'Validation failed',
-                    errors: formattedErrors
-                });
-                return;
-            }
-
-            // Valid data - replace request body with validated instance
-            req.body = dtoObject;
-            next();
-        } catch (error) {
-            console.error('Validation middleware error:', error);
-            res.status(500).json({
-                message: 'Internal validation error',
-                error: error instanceof Error ? error.message : 'Unknown error'
-            });
+        if (errors.length > 0) {
+            const formattedErrors = formatValidationErrors(errors);
+            // Instead of sending a response, throw a structured error
+            const errorMessage = `Validation failed: ${JSON.stringify(formattedErrors)}`;
+            throw new BadRequestError(errorMessage);
         }
+
+        // Valid data - replace request body with validated instance and call next
+        req.body = dtoObject;
+        next();
     };
 }
 

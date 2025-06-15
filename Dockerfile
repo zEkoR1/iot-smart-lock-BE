@@ -11,7 +11,7 @@ RUN npm install
 COPY . .
 
 # Generate Prisma client
-RUN npm run prisma:generate
+RUN node ./node_modules/prisma/build/index.js generate
 
 # Build the TypeScript code
 RUN npm run build
