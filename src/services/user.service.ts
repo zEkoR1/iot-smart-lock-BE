@@ -10,8 +10,24 @@ class UserService {
         this.prisma = prismaClient;
     }
 
-    findAll() {
-        return this.prisma.user.findMany();
+    async findAll() {
+        const users = await this.prisma.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                devices: {
+                    select: {
+                        role: true,
+                    },
+                },
+            },
+        });
+
+        return users.map((user: { id: any; name: any; devices: { role: any }[] }) => ({
+            id: user.id,
+            name: user.name,
+            role: user.devices[0]?.role || null,
+        }));
     }
 
     async create(req: any) {

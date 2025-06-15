@@ -1,12 +1,13 @@
 import jwt from 'jsonwebtoken';
 import { v7 as genUuid } from 'uuid';
+import { LoggerService } from './logger.service';
 const prisma = require('../prisma/prisma-client');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default-jwt-secret-for-development';
 
 // Define interface for the log parameters
 interface LogAccessParams {
-  userId: string;
+  userId?: string;
   deviceId: string;
   status: boolean;
   message: string;
@@ -15,9 +16,11 @@ interface LogAccessParams {
 
 class AccessTokenService {
   private prisma: any;
+  private loggerService: LoggerService;
 
-  constructor(prismaClient: any) {
+  constructor(prismaClient: any, loggerService: LoggerService) {
     this.prisma = prismaClient;
+    this.loggerService = loggerService;
   }
 
   async generateAccessToken(userId: string, deviceId: string) {
@@ -87,16 +90,12 @@ class AccessTokenService {
   // Log access attempts (successful or failed)
   async logAccess({ userId, deviceId, status, message, ipAddress = null }: LogAccessParams) {
     try {
-      return await this.prisma.log.create({
-        data: {
-          id: genUuid(),
-          time: new Date(),
-          status,
-          message,
-          ipAddress,
-          userId,
-          deviceId
-        }
+      return await this.loggerService.create({
+        status,
+        message: message || undefined,
+        ipAddress: ipAddress || undefined,
+        userId,
+        deviceId,
       });
     } catch (error) {
       console.error('Failed to log access attempt:', error);
@@ -114,5 +113,6 @@ class AccessTokenService {
   }
 }
 
-const accessTokenService = new AccessTokenService(prisma);
+const loggerService = new LoggerService();
+const accessTokenService = new AccessTokenService(prisma, loggerService);
 module.exports = accessTokenService;

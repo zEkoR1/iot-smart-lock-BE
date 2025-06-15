@@ -1,13 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
+import { LoggerService } from '../services/logger.service';
 const prisma = require('../prisma/prisma-client');
 const deviceService = require('../services/device.service');
+
+const loggerService = new LoggerService();
 
 export async function authenticateDevice(req: Request, res: Response, next: NextFunction) {
   try {
     // Extract API key from header
     const apiKey = req.headers['x-device-api-key'] as string;
-    console.log("here", apiKey)
+    
     if (!apiKey) {
+      await loggerService.create({
+        status: false,
+        message: 'Device API key is required',
+        ipAddress: req.ip
+      });
       return res.status(401).json({ message: 'Device API key is required' });
     }
 
@@ -16,6 +24,11 @@ export async function authenticateDevice(req: Request, res: Response, next: Next
     const device = await deviceService.findOne(apiKey)
 
     if (!device) {
+        await loggerService.create({
+        status: false,
+        message: 'Invalid or inactive device',
+        ipAddress: req.ip
+      });
       return res.status(401).json({ message: 'Invalid or inactive device' });
     }
     // Add device to request object for later use

@@ -59,10 +59,10 @@ model Log {
   status    Boolean
   message   String?
   ipAddress String?
-  userId    String
-  deviceId  String
-  user      User     @relation(fields: [userId], references: [id])
-  device    Device   @relation(fields: [deviceId], references: [id])
+  userId    String?
+  deviceId  String?
+  user      User?     @relation(fields: [userId], references: [id])
+  device    Device?   @relation(fields: [deviceId], references: [id])
 }
 
 enum Role {

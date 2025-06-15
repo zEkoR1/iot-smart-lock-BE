@@ -34,7 +34,6 @@ export async function authenticateBiometrics(req: Request, res: Response) {
 
     if (!verificationResult.success) {
       await accessTokenService.logAccess({
-        userId: 'unknown',
         deviceId,
         status: false,
         message: 'Biometric authentication failed',
@@ -76,6 +75,24 @@ export async function verifyAccessToken(req: Request, res: Response) {
     const result = accessTokenService.verifyToken(token);
 
     if (!result.valid) {
+      // Log failed token verification attempt
+      await accessTokenService.logAccess({
+        status: false,
+        message: 'Invalid token',
+        ipAddress: req.ip,
+        // Attempt to extract userId and deviceId if token is decodable without verification
+        ...(() => {
+          try {
+            const decoded: any = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+            return {
+              userId: decoded.userId as string | undefined,
+              deviceId: decoded.deviceId as string | undefined,
+            };
+          } catch {
+            return {};
+          }
+        })(),
+      });
       return res.status(401).json({ message: 'Invalid token' });
     }
 
