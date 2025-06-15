@@ -38,8 +38,5 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Run database migrations
-RUN npm run db:migrate
-
 # Command to run the application
-CMD ["node", "dist/index.js"] 
+CMD ["npm", "run", "start:prod"] 
