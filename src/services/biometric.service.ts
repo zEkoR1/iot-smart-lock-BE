@@ -1,4 +1,6 @@
 const prisma = require('../prisma/prisma-client');
+const { BIOMETRIC_URL } = process.env;
+
 
 class BiometricService {
   private prisma: any;
@@ -7,21 +9,37 @@ class BiometricService {
     this.prisma = prismaClient;
   }
 
-  // Process external biometric service response
+   async matchBiometrics(faceHash : string) {
+    const res = await fetch(`${BIOMETRIC_URL}/face_id`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ faceHash, user.face }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Biometric svc error ${res.status}: ${text}`);
+    }
+    // Expecting JSON: { match: boolean }
+    const { match } = await res.json();
+    return match;
+  }
+
+
+
+
   async verifyBiometrics(fingerprintHash: string, faceHash: string) {
     try {
-      // Find user with matching biometric data
-      // Both fingerprint AND face must match
       const user = await this.prisma.user.findFirst({
         where: {
-          AND: [
             { fingerprint: fingerprintHash },
-            { face: faceHash }
-          ]
-        }
+          
+      }
       });
-
-      if (!user) {
+      
+      const faceIs = await this.matchBiometrics(faceHash, user.face);
+        
+      if (!user || !faceIs) {
         return { success: false, message: 'Biometric verification failed' };
       }
 
@@ -35,6 +53,7 @@ class BiometricService {
       throw new Error('Failed to verify biometric data');
     }
   }
+
 
   // Mock method to simulate external service hashing
   // In a real app, this would call your external service
