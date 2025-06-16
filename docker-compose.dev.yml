@@ -45,16 +45,16 @@ services:
       - ./:/app
       - /app/node_modules
 
-    live_feed:
-      build:
-        context: ./src/microservices/live_feed
-        dockerfile: DockerfilePy
-      container_name: iot_live_feed
-      restart: always
-      ports:
-        - "5000:5000"
-      environment:
-        FLASK_ENV: production
+  live_feed:
+    build:
+      context: ./src/microservices/live_feed
+      dockerfile: DockerfilePy
+    container_name: iot_live_feed
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_ENV: production
 
 volumes:
   pgdata_dev:
